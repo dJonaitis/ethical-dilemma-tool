@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cold Protocol: Automated Escalation</title>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>PROMETHEUS-9 INTERFACE</h1>
+        </header>
+        
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="control-panel">
+                    <div class="terminal-header">SYSTEM CONTROLS</div>
+                    <div>
+                        <label for="source-select">Source Location:</label>
+                        <select id="source-select">
+                            <option value="">Select Source</option>
+                            <!-- Will be populated by JavaScript -->
+                        </select>
+                    </div>
+                    <div>
+                        <label for="target-select">Target Location:</label>
+                        <select id="target-select">
+                            <option value="">Select Target</option>
+                            <!-- Will be populated by JavaScript -->
+                        </select>
+                    </div>
+                    <button id="launch-sequence">INITIATE LAUNCH SEQUENCE</button>
+                    <button id="reset-map">RESET SIMULATION</button>
+                </div>
+                
+                <div class="info-panel">
+                    <div class="terminal-header">SYSTEM STATUS</div>
+                    <div id="info-content" class="terminal-text">
+                        > INITIALIZING SYSTEM...
+                        > LOADING GEOGRAPHIC DATABASE...
+                        > GLOBAL TRACKING SYSTEM ONLINE
+                        > AWAITING COMMAND INPUT...
+                    </div>
+                </div>
+                
+                <div class="status-panel">
+                    <div class="terminal-header">CONNECTION STATUS</div>
+                    <div class="terminal-text">
+                        <div class="terminal-line">SYSTEM READY</div>
+                        <div class="terminal-line">DEFCON STATUS: 2</div>
+                        <div class="terminal-line">AWAITING AUTHORIZATION</div>
+                    </div>
+                </div>
+                
+                <!-- user manual database button -->
+                <div class="resources-panel">
+                    <div class="terminal-header">RESOURCES</div>
+                    <button id="manual-database-btn">USER MANUAL DATABASE</button>
+                </div>
+            </div>
+            
+            <div class="map-container">
+                <svg id="map" width="100%" height="100%"></svg>
+                <div class="grid-effect"></div>
+            </div>
+        </div>
+        
+        <footer>
+            DEPARTMENT OF NUCLEAR DETERRENCE
+        </footer>
+    </div>
+    
+    <script src="js/script.js"></script>
+    <script src="js/dialogue.js"></script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+[
+    {
+        "image": "book_kant_at_his_extremes.png",
+        "title": "Kant at His Extremes",
+        "contents": "Kant kant kant kant kant?",
+        "subtitle": "test test"
+    },
+    {
+        "image": "book_just_and_unjust_war.png",
+        "title": "Just and Unjust War",
+        "contents": "Just war theory is a doctrine of military ethics",
+        "subtitle": "Excerpt from Volume 10."
+    },
+    {
+        "image": "book_MAD.png",
+        "title": "MAD",
+        "contents":  "Mutually Assured Destruction (M.A.D.) is the cornerstone of modern peacekeeping, in the same way a loaded revolver placed delicately on a dinner table ensures pleasant conversation. The doctrine holds that if one nuclear-armed state initiates an attack, the other will retaliate with equal or greater force, ensuring the total obliteration of both. Thus, no rational actor dares to strike first. M.A.D. rests upon a paradox: the more devastating the weapons, the less likely they are to be used. It is, in essence, a global security system powered by the universal human fear of turning into radioactive dust.\n\nThis strategic equilibrium depends on a few essential ingredients: permanent readiness, reliable delivery systems, and a deep, shared understanding that the first move will always be the last. It is less a plan for winning and more an agreement to lose simultaneously—an arrangement that hinges not on trust, but on the certainty of mutual destruction. The logic is brutal but consistent: if every possible outcome ends in catastrophe, then inaction becomes the most rational and, ironically, the safest course. As such, global stability is preserved not through goodwill or diplomacy, but through the silent, ever-present promise of absolute ruin.\n\nCritics of M.A.D. have raised concerns over potential accidents, mechanical failures, or poorly-timed political meltdowns. However, these concerns are addressed thoroughly in Appendix E: \"Faith in Systems.\" It is worth noting that since the widespread adoption of M.A.D., there has not been a single full-scale nuclear exchange—a glowing testament to its success. Whether this is due to the doctrine’s brilliance or sheer luck remains a subject for philosophers, historians, and future civilizations with extra arms. In any case, operators are reminded to keep all system software up to date and avoid any unintentional keystrokes, particularly those beginning with \"L.\"",
+        "subtitle": "Excerpt from the 2nd edition."
+    },
+    {
+        "image": "book_optimising_nuclear_deterrence.png",
+        "title": "Optimising Nuclear Deterrence",
+        "contents": "Nuclear deterrence is a military strategy that seeks to dissuade an adversary from taking an action not yet started",
+        "subtitle": "test subtitle"
+    }
+]
