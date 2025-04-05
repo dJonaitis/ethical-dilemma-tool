@@ -1,0 +1,107 @@
+/* 
+    Dialogue Styles
+    This file contains the CSS rules for dialogue boxes, modal overlays and related transitions.
+*/
+
+/* Dialogue Box Styles */
+.dialogue-box {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    background-color: rgba(0, 26, 26, 0.9);
+    border: 1px solid #00d8ff;
+    box-shadow: 0 0 20px rgba(0, 216, 255, 0.5);
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    font-family: 'VT323', 'Courier New', monospace;
+    color: #00d8ff;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Modal dialogue styles */
+.dialogue-box.modal {
+    top: 50%;
+    bottom: auto;
+    transform: translate(-50%, -50%);
+    max-height: 80vh;
+    z-index: 10001;
+}
+
+/* Dialogue overlay */
+.dialogue-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 10000;
+}
+
+/* Header, Close, Content, Buttons */
+.dialogue-header {
+    padding: 0.5rem;
+    border-bottom: 1px solid #00d8ff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dialogue-close-btn {
+    background: none;
+    border: none;
+    color: #00d8ff;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.dialogue-close-btn:hover {
+    color: #ff5e5e;
+    text-shadow: 0 0 5px #ff5e5e;
+}
+
+.dialogue-content {
+    padding: 1rem;
+    min-height: 100px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.dialogue-text {
+    white-space: pre-line;
+    line-height: 1.5;
+}
+
+.dialogue-text::after {
+    content: '|';
+    animation: blink 1s step-end infinite;
+    display: inline-block;
+}
+
+.dialogue-buttons {
+    padding: 0.5rem;
+    display: flex;
+    justify-content: center;
+    border-top: 1px solid #00d8ff;
+}
+
+.dialogue-continue-btn {
+    background-color: #001a1a;
+    color: #00d8ff;
+    border: 1px solid #00d8ff;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    box-shadow: 0 0 5px rgba(0, 216, 255, 0.5);
+    transition: background-color 0.2s ease;
+    font-family: 'VT323', 'Courier New', monospace;
+    max-width: 200px;
+    margin: 0 auto;
+}
+
+.dialogue-continue-btn:hover {
+    background-color: #003333;
+}

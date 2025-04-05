@@ -1,7 +1,8 @@
-/**
- * Dialog Box System
- * Creates interactive dialog boxes with typing animation and continuation options
- */
+/*
+    Dialogue Module
+    Contains the DialogueBox class and associated methods for typing animation,
+    modal dialogue creation, and handling user interaction.
+*/
 
 class DialogueBox {
     constructor(options = {}) {
@@ -224,23 +225,6 @@ class DialogueBox {
     }
 }
 
-// Example usage:
-const dialogueSystem = new DialogueBox();
-dialogueSystem.show({
-    speaker: "SYSTEM",
-    text: "Warning: Unauthorized launch sequence detected.",
-    next: {
-        speaker: "SYSTEM",
-        text: "Countermeasures initiated. Please stand by."
-    }
-});
-
-// Create a specialized modal dialogue system
-const modalDialogueSystem = new DialogueBox({
-    modal: true,
-    width: '800px'
-});
-
-// Global instance for easy access
+// Global instances for dialogue
 window.DialogueSystem = new DialogueBox();
-window.ModalDialogueSystem = modalDialogueSystem;
+window.ModalDialogueSystem = new DialogueBox({ modal: true });

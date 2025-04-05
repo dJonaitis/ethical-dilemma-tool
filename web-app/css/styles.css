@@ -1,3 +1,7 @@
+/* 
+    Base Styles & Layout
+    This file handles global layout, map styles, UI controls, and non‐dialogue specific rules.
+*/
 body {
     background-color: black;
     color: #00ff00;
@@ -347,145 +351,6 @@ label {
     cursor: pointer;
 }
 
-/* Dialogue Box Styles */
-.dialogue-box {
-    position: fixed;
-    bottom: 100px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 600px;
-    background-color: rgba(0, 26, 26, 0.9);
-    border: 1px solid #00d8ff;
-    box-shadow: 0 0 20px rgba(0, 216, 255, 0.5);
-    display: flex;
-    flex-direction: column;
-    z-index: 1000;
-    font-family: 'VT323', 'Courier New', monospace;
-    color: #00d8ff;
-    animation: fadeIn 0.3s ease-in-out;
-}
-
-/* Modal dialogue styles */
-.dialogue-box.modal {
-    top: 50%;
-    bottom: auto;
-    transform: translate(-50%, -50%);
-    max-height: 80vh;
-    z-index: 10001;
-}
-
-/* Blur the background when dialogue is open */
-body.dialogue-open .container {
-    filter: blur(5px);
-    transition: filter 0.3s ease;
-    pointer-events: none; /* Disable interaction with blurred content */
-}
-
-/* Overlay for modal dialogues */
-.dialogue-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7);
-    z-index: 10000;
-}
-
-/* Optionally remove or comment out the overlay styling if not used
-.dialogue-overlay.library-overlay {
-    background-color: rgba(0, 0, 0, 0.4);  // Lighter overlay
-}
-*/
-
-.dialogue-header {
-    padding: 0.5rem;
-    border-bottom: 1px solid #00d8ff;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-/* Close button (X) */
-.dialogue-close-btn {
-    background: none;
-    border: none;
-    color: #00d8ff;
-    font-size: 1.5rem;
-    cursor: pointer;
-    width: auto;
-    margin: 0;
-    padding: 0 0.5rem;
-    box-shadow: none;
-}
-
-.dialogue-close-btn:hover {
-    color: #ff5e5e;
-    text-shadow: 0 0 5px #ff5e5e;
-    background: none;
-}
-
-.dialogue-content {
-    padding: 1rem;
-    min-height: 100px;
-    max-height: 200px;
-    overflow-y: auto;
-}
-
-.dialogue-text {
-    white-space: pre-line;
-    line-height: 1.5;
-}
-
-.dialogue-text::after {
-    content: '|';
-    animation: blink 1s step-end infinite;
-    display: inline-block;
-}
-
-.dialogue-buttons {
-    padding: 0.5rem;
-    display: flex;
-    justify-content: center;
-    border-top: 1px solid #00d8ff;
-}
-
-.dialogue-continue-btn {
-    background-color: #001a1a;
-    color: #00d8ff;
-    border: 1px solid #00d8ff;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    text-transform: uppercase;
-    box-shadow: 0 0 5px rgba(0, 216, 255, 0.5);
-    transition: background-color 0.2s ease;
-    font-family: 'VT323', 'Courier New', monospace;
-    max-width: 200px;
-    margin: 0 auto;
-}
-
-.dialogue-continue-btn:hover {
-    background-color: #003333;
-}
-
-/* Resources panel styles */
-.resources-panel {
-    margin-bottom: 2rem;
-    position: relative;
-    width: 100%;
-}
-
-/* Keep animation for button feedback */
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-}
-
-.button-pulse {
-    animation: pulse 2s infinite;
-}
-
 /* Bookshelf Styles */
 .bookshelf-container {
     padding: 20px;
@@ -700,40 +565,43 @@ body.dialogue-open .container {
     background-color: #003333;
 }
 
-/* Book Dialogue Styles */
-.book-dialogue {
-    position: fixed;           /* ensure fixed positioning */
-    top: 50%;                  /* center vertically */
-    left: 50%;                 /* center horizontally */
-    transform: translate(-50%, -50%);
-    width: 90%;
-    max-width: 800px;
-    max-height: 80vh;
-    background-color: rgba(0,26,26,0.9);
+/* Dialogue Box Styles */
+.dialogue-box {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    background-color: rgba(0, 26, 26, 0.9);
     border: 1px solid #00d8ff;
-    box-shadow: 0 0 20px rgba(0,216,255,0.5);
-    z-index: 99999;            /* increased z-index */
+    box-shadow: 0 0 20px rgba(0, 216, 255, 0.5);
     display: flex;
     flex-direction: column;
+    z-index: 1000;
     font-family: 'VT323', 'Courier New', monospace;
-    font-size: 1.5rem;         /* increased font size */
-    padding: 20px;
+    color: #00d8ff;
+    animation: fadeIn 0.3s ease-in-out;
 }
 
-/* Blur all underlying content when a book dialogue is open */
-body.book-dialogue-open .container {
-    filter: blur(8px);
-    pointer-events: none;
+.dialogue-box.modal {
+    top: 50%;
+    bottom: auto;
+    transform: translate(-50%, -50%);
+    max-height: 80vh;
+    z-index: 10001;
 }
 
-/* Optionally adjust header title size */
-.book-dialogue .dialogue-header h1,
-.book-dialogue .terminal-header {
-    font-size: 2.5rem;
+.dialogue-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 10000;
 }
 
-/* Reuse dialogue-heading and content styles for the book dialogue */
-.book-dialogue .dialogue-header {
+.dialogue-header {
     padding: 0.5rem;
     border-bottom: 1px solid #00d8ff;
     display: flex;
@@ -741,24 +609,58 @@ body.book-dialogue-open .container {
     align-items: center;
 }
 
-.book-dialogue .dialogue-content {
+.dialogue-close-btn {
+    background: none;
+    border: none;
+    color: #00d8ff;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.dialogue-close-btn:hover {
+    color: #ff5e5e;
+    text-shadow: 0 0 5px #ff5e5e;
+}
+
+.dialogue-content {
     padding: 1rem;
+    min-height: 100px;
+    max-height: 200px;
     overflow-y: auto;
-    flex-grow: 1;
-    white-space: pre-wrap;
+}
+
+.dialogue-text {
+    white-space: pre-line;
     line-height: 1.5;
 }
 
-/* Use existing dialogue-close-btn styles for consistency */
-.book-dialogue .dialogue-close-btn {
-    background: none;
-    border: 1px solid #00d8ff;
-    color: #00ff00;
-    padding: 0.5rem;
-    cursor: pointer;
-    font-family: 'VT323', 'Courier New', monospace;
+.dialogue-text::after {
+    content: '|';
+    animation: blink 1s step-end infinite;
+    display: inline-block;
 }
 
-.book-dialogue .dialogue-close-btn:hover {
+.dialogue-buttons {
+    padding: 0.5rem;
+    display: flex;
+    justify-content: center;
+    border-top: 1px solid #00d8ff;
+}
+
+.dialogue-continue-btn {
+    background-color: #001a1a;
+    color: #00d8ff;
+    border: 1px solid #00d8ff;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    box-shadow: 0 0 5px rgba(0, 216, 255, 0.5);
+    transition: background-color 0.2s ease;
+    font-family: 'VT323', 'Courier New', monospace;
+    max-width: 200px;
+    margin: 0 auto;
+}
+
+.dialogue-continue-btn:hover {
     background-color: #003333;
 }

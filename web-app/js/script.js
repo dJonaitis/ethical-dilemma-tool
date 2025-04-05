@@ -1,3 +1,9 @@
+/*
+    Main UI & Book Management Module
+    Contains general UI controls, event binding, and BookshelfManager along with other
+    interface functions for user interaction (e.g. launch sequences, resetting maps, etc.).
+*/
+
 document.addEventListener('DOMContentLoaded', function() {
     const svg = d3.select("#map");
     

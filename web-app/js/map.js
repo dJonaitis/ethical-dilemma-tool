@@ -1,3 +1,9 @@
+/*
+    Map Module
+    Contains all code handling map setup, loading of GeoJSON, rendering countries,
+    drawing cities, arcs, and visual effects such as scanlines and flickers.
+*/
+
 document.addEventListener('DOMContentLoaded', function() {
     // Map setup
     const svg = d3.select("#map");
