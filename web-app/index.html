@@ -12,10 +12,14 @@
     <title>Cold Protocol: Automated Escalation</title>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/library.css">
     <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
-    <div class="container">
+    <!-- Add scanline overlay for retro effect -->
+    <div class="scanline"></div>
+    
+    <div class="container crt-flicker">
         <header>
             <h1>PROMETHEUS-9 INTERFACE</h1>
             
@@ -83,5 +87,59 @@
     <script src="js/map.js"></script>
     <script src="js/dialogue.js"></script>
     <script src="js/script.js"></script>
+    <script>
+        // Override modal position to center it
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof bookshelfManager !== 'undefined') {
+                const originalAddEventListener = manualDatabaseBtn.addEventListener;
+                manualDatabaseBtn.addEventListener = function(event, handler) {
+                    if (event === 'click') {
+                        const wrappedHandler = function() {
+                            handler.apply(this, arguments);
+                            // Find and adjust the modal
+                            setTimeout(() => {
+                                const modal = document.querySelector('.library-modal');
+                                if (modal) {
+                                    // Auto-size to fit content
+                                    modal.style.width = 'auto';
+                                    modal.style.maxWidth = 'none';
+                                    // Ensure modal has position relative for absolute positioning context
+                                    modal.style.position = 'relative';
+                                    
+                                    // Update the close button style
+                                    const closeBtn = modal.querySelector('.dialogue-close-btn');
+                                    if (closeBtn) {
+                                        closeBtn.className = 'dialogue-close-btn library-close-btn';
+                                        // Use cssText to apply all styles with !important flags properly
+                                        closeBtn.style.cssText = `
+                                            position: absolute !important;
+                                            top: 5px !important;
+                                            right: 5px !important;
+                                            width: 16px !important;
+                                            height: 16px !important;
+                                            min-width: 16px !important;
+                                            max-width: 16px !important;
+                                            font-size: 10px !important;
+                                            padding: 0 !important;
+                                            margin: 0 !important;
+                                            line-height: 1 !important;
+                                            z-index: 1010 !important;
+                                            display: flex !important;
+                                            align-items: center !important;
+                                            justify-content: center !important;
+                                            overflow: hidden !important;
+                                            box-sizing: border-box !important;
+                                        `;
+                                    }
+                                }
+                            }, 0);
+                        };
+                        return originalAddEventListener.call(this, event, wrappedHandler);
+                    }
+                    return originalAddEventListener.apply(this, arguments);
+                };
+            }
+        });
+    </script>
 </body>
 </html>

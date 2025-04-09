@@ -5,6 +5,22 @@
 */
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Get username from localStorage (set during login)
+    const username = localStorage.getItem('prometheus_username') || 'OPERATOR';
+    
+    // Set a welcome message in the header
+    const header = document.querySelector('header');
+    const welcomeMessage = document.createElement('div');
+    welcomeMessage.className = 'welcome-message';
+    welcomeMessage.textContent = `WELCOME, ${username.toUpperCase()} | CLEARANCE LEVEL: ALPHA`;
+    header.appendChild(welcomeMessage);
+    
+    // Check if user is logged in, redirect to login if not
+    if (!localStorage.getItem('prometheus_username')) {
+        window.location.href = 'login.html';
+        return;
+    }
+    
     const svg = d3.select("#map");
     
     // Set projection focused on North America
@@ -21,8 +37,9 @@ document.addEventListener('DOMContentLoaded', function() {
         infoContent.innerHTML = message;
     }
 
-    // Show loading message
+    // Show loading message with username
     updateInfoPanel(`
+        > WELCOME ${username.toUpperCase()}
         > INITIALIZING MAP DATA...
         > LOADING GEOGRAPHIC DATABASE...
         > SCANNING SATELLITE IMAGERY...
@@ -425,7 +442,13 @@ document.addEventListener('DOMContentLoaded', function() {
             titleElem.textContent = book.name;
             headerElem.appendChild(titleElem);
             
-            // New subtitle element.
+            // Add user info to header
+            const userInfoElem = document.createElement('div');
+            userInfoElem.className = 'user-access-info';
+            userInfoElem.textContent = `ACCESSED BY: ${username.toUpperCase()} | CLASSIFIED`;
+            headerElem.appendChild(userInfoElem);
+            
+            // New subtitle element
             const subtitleElem = document.createElement('div');
             subtitleElem.className = 'book-subtitle';
             subtitleElem.textContent = book.subtitle;

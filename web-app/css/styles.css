@@ -664,3 +664,151 @@ label {
 .dialogue-continue-btn:hover {
     background-color: #003333;
 }
+
+/* Login Page Styles */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #001a1a;
+    overflow: hidden;
+    position: relative;
+}
+
+.login-box {
+    background-color: rgba(0, 26, 26, 0.9);
+    border: 2px solid #00d8ff;
+    box-shadow: 0 0 20px rgba(0, 216, 255, 0.6);
+    width: 500px;
+    padding: 30px;
+    position: relative;
+    z-index: 2;
+    animation: terminalGlow 2s infinite;
+}
+
+.login-animation {
+    margin: 20px 0;
+    height: 150px;
+    overflow: hidden;
+    font-family: 'VT323', 'Courier New', monospace;
+    color: #00d8ff;
+}
+
+.boot-sequence {
+    margin: 0;
+    white-space: pre-line;
+    line-height: 1.5;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    color: #00d8ff;
+    margin-bottom: 8px;
+    font-family: 'VT323', 'Courier New', monospace;
+    font-size: 1.2em;
+}
+
+.form-group input {
+    width: 100%;
+    background-color: #001a1a;
+    border: 1px solid #00d8ff;
+    color: #05ffb0;
+    padding: 10px;
+    font-family: 'VT323', 'Courier New', monospace;
+    font-size: 1.1em;
+    box-shadow: 0 0 5px rgba(0, 216, 255, 0.3);
+}
+
+.form-group input:focus {
+    outline: none;
+    box-shadow: 0 0 8px rgba(0, 216, 255, 0.7);
+}
+
+#login-button {
+    background-color: #001a1a;
+    color: #00d8ff;
+    font-family: 'VT323', 'Courier New', monospace;
+    font-size: 1.2em;
+    border: 1px solid #00d8ff;
+    padding: 10px 20px;
+    margin-top: 10px;
+    cursor: pointer;
+    width: 100%;
+    text-transform: uppercase;
+    box-shadow: 0 0 5px rgba(0, 216, 255, 0.5);
+    transition: all 0.3s ease;
+}
+
+#login-button:hover {
+    background-color: rgba(0, 216, 255, 0.1);
+}
+
+#login-button:active {
+    transform: scale(0.98);
+}
+
+.login-footer {
+    margin-top: 30px;
+    text-align: center;
+    color: #00d8ff;
+    font-size: 0.9em;
+    border-top: 1px dashed #00d8ff;
+    padding-top: 15px;
+    font-family: 'VT323', 'Courier New', monospace;
+}
+
+.security-notice {
+    color: #ff3333;
+    margin-top: 5px;
+    font-size: 0.9em;
+}
+
+@keyframes cursorBlink {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+}
+
+/* Scanline effect for retro CRT look */
+.scanline {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.03) 50%, 
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 100% 4px;
+  pointer-events: none; /* Allow clicks to pass through */
+  opacity: 0.3;
+  animation: scanline 8s linear infinite;
+}
+
+@keyframes scanline {
+  0% {
+    background-position: 0 0%;
+  }
+  100% {
+    background-position: 0 1000%;
+  }
+}
+
+/* CRT flicker effect */
+.crt-flicker {
+  animation: flicker 0.15s infinite;
+  opacity: 0.8;
+}
+
+@keyframes flicker {
+  0% { opacity: 0.8; }
+  50% { opacity: 0.86; }
+  100% { opacity: 0.8; }
+}
