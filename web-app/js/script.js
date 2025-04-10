@@ -4,19 +4,75 @@
     interface functions for user interaction (e.g. launch sequences, resetting maps, etc.).
 */
 
+// Declare global variables to hold data needed by demoMissiles
+window.appData = {
+    cities: null,
+    americanCities: null,
+    username : null,
+    demoTargetCount : null
+};
+
+// Make demoMissiles a global function attached to window
+window.demoMissiles = function() {
+    console.log("Demo missiles function called");
+    setTimeout(() => {
+        // Check if data is loaded
+        if (!window.appData.cities || !window.appData.americanCities) {
+            console.error("Map data not loaded yet");
+            return;
+        }
+        
+        // Find Havana in the cities array for the demo
+        const havana = window.appData.cities.find(city => city.name === "Havana");
+        
+        // Create all animated arcs simultaneously
+        if (havana) {
+            
+            window.appData.americanCities.forEach(city => {
+                window.createAnimatedArc(havana, city);
+            });
+        }
+    }, 500);
+    // Update #casualty-counter after timeout
+    setTimeout(() => {
+        const casualtyCounter = document.getElementById('casualty-counter');
+    if (casualtyCounter) {
+        let currentCount = 0;
+        const targetCount = 3120944; // i estimated these deaths by looking at https://nuclearsecrecy.com/nukemap/ and taking a random city, dropping 150kt and multiplying that by our 10 cities
+        window.appData.demoTargetCount = targetCount;
+        const increment = Math.ceil(targetCount / 200); // Adjust speed by dividing into 200 steps
+        const interval = 30; // Update every 50ms
+
+        const counterInterval = setInterval(() => {
+            currentCount += increment;
+            if (currentCount >= targetCount) {
+                currentCount = targetCount;
+                clearInterval(counterInterval);
+            }
+            casualtyCounter.textContent = `Casualties: ${currentCount.toLocaleString()}`; // Format with commas
+        }, interval);
+    }
+    }, 3000);
+    
+
+
+};
+
 document.addEventListener('DOMContentLoaded', function() {
     // Get username from localStorage (set during login)
-    const username = localStorage.getItem('prometheus_username') || 'OPERATOR';
+    const username = localStorage.getItem('username') || 'OPERATOR';
+    window.appData.username = username;
     
     // Set a welcome message in the header
     const header = document.querySelector('header');
     const welcomeMessage = document.createElement('div');
     welcomeMessage.className = 'welcome-message';
-    welcomeMessage.textContent = `WELCOME, ${username.toUpperCase()} | CLEARANCE LEVEL: ALPHA`;
+    welcomeMessage.textContent = `WELCOME, ${username.toUpperCase()} | TODAY'S DATE IS OCTOBER 24, 1962`;
     header.appendChild(welcomeMessage);
+
     
     // Check if user is logged in, redirect to login if not
-    if (!localStorage.getItem('prometheus_username')) {
+    if (!localStorage.getItem('username')) {
         window.location.href = 'login.html';
         return;
     }
@@ -31,20 +87,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const path = d3.geoPath().projection(projection);
 
-    // Function to update the info panel
-    function updateInfoPanel(message) {
-        const infoContent = document.getElementById('info-content');
-        infoContent.innerHTML = message;
-    }
-
-    // Show loading message with username
-    updateInfoPanel(`
-        > WELCOME ${username.toUpperCase()}
-        > INITIALIZING MAP DATA...
-        > LOADING GEOGRAPHIC DATABASE...
-        > SCANNING SATELLITE IMAGERY...
-        > ESTABLISHING GLOBAL COORDINATES...
-    `);
 
     // Load GeoJSON data for the map
     d3.json("./1981-v1.1/geojson/Admin_0_polygons.geojson").then(function(data) {
@@ -55,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .attr("class", "country");
         
         // Load waterbodies after countries
-        d3.json("./1981-v1.1/geojson/Waterbodies.geojson").then(function(data) {
+        d3.json("./1981-v1.1/geojson/Rivers.geojson").then(function(data) {
             svg.selectAll(".waterbody")
                 .data(data.features)
                 .enter().append("path")
@@ -63,21 +105,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 .attr("class", "waterbody")
                 .style("opacity", 0.5);
                 
-            // Update status after loading map data
-            updateInfoPanel(`
-                > MAP DATA LOADED SUCCESSFULLY
-                > TARGETING SYSTEM ONLINE
-                > COORDINATES ESTABLISHED
-                > READY FOR TARGET SELECTION
-            `);
+
         });
     }).catch(function(error) {
         console.error("Error loading map data:", error);
-        updateInfoPanel(`
-            > ERROR LOADING MAP DATA
-            > CHECK NETWORK CONNECTION
-            > CONTACT SYSTEM ADMINISTRATOR
-        `);
     });
 
     // Example of adding missile arcs
@@ -113,6 +144,10 @@ document.addEventListener('DOMContentLoaded', function() {
         {name: "Miami", coords: [-80.1918, 25.7617]},
         {name: "Seattle", coords: [-122.3321, 47.6062]},
     ];
+    
+    // Store cities in global appData for access by demoMissiles
+    window.appData.cities = cities;
+    window.appData.americanCities = americanCities;
 
     // Populate dropdowns with cities
     const sourceSelect = document.getElementById('source-select');
@@ -162,8 +197,8 @@ document.addEventListener('DOMContentLoaded', function() {
         .append("title")
         .text(d => d.name);
     
-    // Function to create an animated arc
-    function createAnimatedArc(fromCity, toCity) {
+    // Function to create an animated arc - make it global
+    window.createAnimatedArc = function(fromCity, toCity) {
         const [x1, y1] = projection(fromCity.coords);
         const [x2, y2] = projection(toCity.coords);
         
@@ -175,7 +210,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Animate the arc
         arc.transition()
-            .duration(3000)
+            .duration(2000)
             .style("opacity", 1)
             .attrTween("d", function() {
                 return function(t) {
@@ -205,7 +240,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     .attr("opacity", 0)
                     .remove();
             });
-    }
+    };
 
     // Set up launch button event
     const launchButton = document.getElementById('launch-sequence');
@@ -214,11 +249,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const targetCity = targetSelect.value;
         
         if (!sourceCity || !targetCity) {
-            updateInfoPanel(`
-                > ERROR: MISSING PARAMETERS
-                > SOURCE AND TARGET LOCATIONS REQUIRED
-                > LAUNCH SEQUENCE ABORTED
-            `);
             
             // Show error dialogue
             DialogueSystem.show({
@@ -247,18 +277,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     text: "Launch confirmed. Missile deployed. Impact estimated in T-minus 180 seconds.",
                     next: function() {
                         // Create the animated arc after dialogue sequence
-                        createAnimatedArc(source, target);
+                        window.createAnimatedArc(source, target);
                     }
                 }
             });
-            
-            updateInfoPanel(`
-                > LAUNCH SEQUENCE INITIATED
-                > SOURCE: ${sourceCity}
-                > TARGET: ${targetCity}
-                > CALCULATING TRAJECTORY...
-                > MISSILE LAUNCHED
-            `);
         }
     });
 
@@ -273,36 +295,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Reset dropdowns
         sourceSelect.value = "";
         targetSelect.value = "";
-        
-        // Update info panel
-        updateInfoPanel(`
-            > SYSTEM RESET COMPLETE
-            > SIMULATION CLEARED
-            > READY FOR NEW TARGET SELECTION
-        `);
-    });
-    
-    // Optional: Automatically run the demo when loading
-    setTimeout(() => {
-        // Find Havana in the cities array for the demo
-        const havana = cities.find(city => city.name === "Havana");
-        
-        // Create one animated arc with delay
-        if (havana) {
-            updateInfoPanel(`
-                > DEMONSTRATION MODE ACTIVATED
-                > SOURCE: HAVANA, CUBA
-                > MULTIPLE TARGETS IDENTIFIED
-                > MISSILES LAUNCHING...
-            `);
-            
-            americanCities.forEach((city, i) => {
-                setTimeout(() => {
-                    createAnimatedArc(havana, city);
-                }, i * 1000); // 1 second delay between each arc
-            });
-        }
-    }, 3000); // Start demo after 3 seconds
+
+    });    
     
     // Book class to represent manuals in the library
     class Book {
@@ -359,37 +353,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 .catch(error => {
                     console.error('Error loading books:', error);
                     
-                    // Add fallback books in case JSON fails to load
-                    console.log("Using fallback books");
-                    this.addBook(new Book(
-                        "Kant at His Extremes",
-                        "Exploring the boundaries of moral philosophy",
-                        "Exploring the categorical imperative and its applications in extreme scenarios.",
-                        "book_kant_at_his_extremes.png"
-                    ));
                     
-                    this.addBook(new Book(
-                        "Just and Unjust War",
-                        "The ethics of conflict",
-                        "Analysis of the moral dimensions of warfare and the ethics of military conflict.",
-                        "book_just_and_unjust_war.png"
-                    ));
-                    
-                    this.addBook(new Book(
-                        "MAD",
-                        "Destruction and deterrence",
-                        "Mutually assured destruction (MAD) is a doctrine of military strategy and national security policy.",
-                        "book_MAD.png"
-                    ));
-                    
-                    this.addBook(new Book(
-                        "Optimising Nuclear Deterrence",
-                        "Strategies for maximum efficiency",
-                        "Nuclear deterrence theory and implementation strategies for maximum effectiveness.",
-                        "book_optimising_nuclear_deterrence.png"
-                    ));
-                    
-                    if (callback) callback();
                 });
         }
 
@@ -420,46 +384,53 @@ document.addEventListener('DOMContentLoaded', function() {
         
         openBook(book) {
             console.log("Opening book dialogue for", book.name);
+            
             // If the library modal is still open, remove it
             const modal = document.querySelector('.library-modal');
             if (modal) {
                 modal.parentNode.removeChild(modal);
                 document.body.classList.remove('dialogue-open');
             }
-            // Create a dialogue box for the book using the new CSS class
+            
+            // Create overlay for modal effect
+            const overlay = document.createElement('div');
+            overlay.className = 'dialogue-overlay';
+            document.body.appendChild(overlay);
+            
+            // Create a modal dialogue box for the book
             const dialogue = document.createElement('div');
-            dialogue.className = 'book-dialogue';
+            dialogue.className = 'dialogue-box modal';
             
             // Add a class to blur other UI
-            document.body.classList.add('book-dialogue-open');
+            document.body.classList.add('dialogue-open');
             
             // Create header with title and close button
             const headerElem = document.createElement('div');
             headerElem.className = 'dialogue-header';
             
+            // Book title in header
             const titleElem = document.createElement('div');
             titleElem.className = 'terminal-header';
             titleElem.textContent = book.name;
             headerElem.appendChild(titleElem);
             
-            // Add user info to header
-            const userInfoElem = document.createElement('div');
-            userInfoElem.className = 'user-access-info';
-            userInfoElem.textContent = `ACCESSED BY: ${username.toUpperCase()} | CLASSIFIED`;
-            headerElem.appendChild(userInfoElem);
             
-            // New subtitle element
+            // New subtitle element with more prominence
             const subtitleElem = document.createElement('div');
             subtitleElem.className = 'book-subtitle';
             subtitleElem.textContent = book.subtitle;
+            subtitleElem.style.fontWeight = 'bold';
+            subtitleElem.style.margin = '8px 0';
             headerElem.appendChild(subtitleElem);
             
+            // Close button
             const closeBtn = document.createElement('button');
             closeBtn.className = 'dialogue-close-btn';
             closeBtn.innerHTML = '&times;';
             closeBtn.addEventListener('click', () => {
+                document.body.removeChild(overlay);
                 document.body.removeChild(dialogue);
-                document.body.classList.remove('book-dialogue-open');
+                document.body.classList.remove('dialogue-open');
             });
             headerElem.appendChild(closeBtn);
             dialogue.appendChild(headerElem);
@@ -467,9 +438,16 @@ document.addEventListener('DOMContentLoaded', function() {
             // Create content container for the book contents
             const contentElem = document.createElement('div');
             contentElem.className = 'dialogue-content';
-            contentElem.textContent = book.contents;
-            dialogue.appendChild(contentElem);
+            contentElem.style.maxHeight = '60vh';
+            contentElem.style.overflowY = 'auto';
             
+            // Create text element for book content
+            const textElem = document.createElement('div');
+            textElem.className = 'dialogue-text';
+            textElem.textContent = book.contents;
+            contentElem.appendChild(textElem);
+            
+            dialogue.appendChild(contentElem);
             document.body.appendChild(dialogue);
         }
     }

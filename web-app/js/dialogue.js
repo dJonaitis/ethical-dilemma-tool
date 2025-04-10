@@ -8,7 +8,7 @@ class DialogueBox {
     constructor(options = {}) {
         // Default options
         this.options = {
-            typingSpeed: 30,         // ms per character
+            typingSpeed: 3,         // ms per character
             container: 'body',       // where to append the dialogue box
             position: 'bottom',      // position on screen
             width: '600px',          // width of dialogue box
@@ -165,6 +165,12 @@ class DialogueBox {
      * Handle continue button click
      */
     handleContinue() {
+        // Safety check - if currentDialogue is null, do nothing
+        if (!this.currentDialogue) {
+            console.warn('DialogueBox: handleContinue called with no active dialogue');
+            return;
+        }
+        
         // Check if there's a next dialogue or action
         if (this.currentDialogue.next) {
             // If next is a string, assume it's the next dialogue text

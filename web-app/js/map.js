@@ -492,33 +492,16 @@ document.addEventListener('DOMContentLoaded', function() {
             .attr("data-from", city1Name)
             .attr("data-to", city2Name);
             
-        // Add connection message
-        updateInfoPanel({
-            "CONNECTION": "ESTABLISHED",
-            "SOURCE": city1Name,
-            "TARGET": city2Name,
-            "STATUS": "ACTIVE"
-        });
     }
     
     // Simulate terminal boot sequence
     function simulateBootSequence() {
-        const infoContent = document.getElementById('info-content');
-        infoContent.innerHTML = `<div class="terminal-text">
-> INITIALIZING SYSTEM...
-> LOADING GEOGRAPHIC DATABASE...
-> ESTABLISHING SECURE CONNECTION...
-> GLOBAL TRACKING SYSTEM ONLINE
-> ATTEMPTING MAP DATA RETRIEVAL...
-> AWAITING DATA...
-</div>`;
+        console.log('boot')
     }
     
     // Initialize the application
     function init() {
         try {
-            // Simulate boot sequence
-            simulateBootSequence();
             
             // Add grid effect to map container
             const mapContainer = document.querySelector('.map-container');
@@ -562,14 +545,6 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(addScanlineEffect, 500);
         } catch (error) {
             console.error("Error initializing application:", error);
-            const infoContent = document.getElementById('info-content');
-            if (infoContent) {
-                infoContent.innerHTML = `<div class="terminal-text">
-> SYSTEM ERROR
-> ${error.message || "Unknown error"}
-> CONTACT SYSTEM ADMINISTRATOR
-</div>`;
-            }
         }
     }
     

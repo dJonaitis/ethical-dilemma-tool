@@ -208,7 +208,7 @@ footer {
     text-shadow: 0 0 5px #00d8ff;
 }
 
-select, button {
+select, .terminal-btn {
     background-color: #001a1a;
     color: #00d8ff;
     border: 1px solid #00d8ff;
@@ -222,7 +222,6 @@ select, button {
 button {
     cursor: pointer;
     text-transform: uppercase;
-    margin-top: 1rem;
 }
 
 button:hover {
@@ -811,4 +810,42 @@ label {
   0% { opacity: 0.8; }
   50% { opacity: 0.86; }
   100% { opacity: 0.8; }
+}
+
+#casualty-counter {
+    /* on the far right */
+    position: absolute;
+    top: 2rem;
+    right: 10rem;
+    background-color: rgba(0, 26, 26, 0.9);
+
+}
+
+.danger-btn {
+    background-color: #ff0000;
+    color: #ffffff;
+    border: 2px solid #aa0000;
+    height: 50px;
+    text-shadow: 0 0 5px #ff5555;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+    animation: pulse 2s infinite;
+    font-size: 25px;
+    display:none;
+}
+.danger-btn:hover {
+    background-color: #dd0000;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
+}
+@keyframes pulse {
+    0% { box-shadow: 0 0 5px rgba(255, 0, 0, 0.5); }
+    50% { box-shadow: 0 0 15px rgba(255, 0, 0, 0.8); }
+    100% { box-shadow: 0 0 5px rgba(255, 0, 0, 0.5); }
+}
+
+#no-response {
+    /* position: absolute;
+    top: 70%;
+    left: 50%; */
+    /* transform: translate(-50%, -50%); */
+    font-size: 22px;
 }

@@ -52,7 +52,7 @@
 
 .dialogue-close-btn {
     background: none;
-    border: none;
+    border: 1px solid #00d8ff;
     color: #00d8ff;
     font-size: 1.5rem;
     cursor: pointer;

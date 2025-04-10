@@ -9,7 +9,7 @@
     -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cold Protocol: Automated Escalation</title>
+    <title>test</title>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/library.css">
@@ -21,8 +21,8 @@
     
     <div class="container crt-flicker">
         <header>
-            <h1>PROMETHEUS-9 INTERFACE</h1>
-            
+            <h1>app title goes here</h1>
+            <h2 id="casualty-counter">Casualties: 0</h2>
         </header>
         
         <div class="main-content">
@@ -43,17 +43,15 @@
                             <!-- Will be populated by JavaScript -->
                         </select>
                     </div>
-                    <button id="launch-sequence">INITIATE LAUNCH SEQUENCE</button>
-                    <button id="reset-map">RESET SIMULATION</button>
+                    <button id="launch-sequence" class="terminal-btn">INITIATE LAUNCH SEQUENCE</button>
+                    <button id="reset-map" class="terminal-btn">RESET SIMULATION</button>
                 </div>
                 
                 <div class="info-panel">
-                    <div class="terminal-header">SYSTEM STATUS</div>
+                    <div class="terminal-header">RESPONSE OPTIONS</div>
                     <div id="info-content" class="terminal-text">
-                        > INITIALIZING SYSTEM...
-                        > LOADING GEOGRAPHIC DATABASE...
-                        > GLOBAL TRACKING SYSTEM ONLINE
-                        > AWAITING COMMAND INPUT...
+                        <button id="launch-response-btn" class="terminal-btn danger-btn" style="display: none;">LAUNCH RESPONSE</button>
+                        <div id="no-response" style="display: block;">No response available, check back later.</div>
                     </div>
                 </div>
                 
@@ -61,15 +59,15 @@
                     <div class="terminal-header">CONNECTION STATUS</div>
                     <div class="terminal-text">
                         <div class="terminal-line">SYSTEM READY</div>
-                        <div class="terminal-line">DEFCON STATUS: 2</div>
-                        <div class="terminal-line">AWAITING AUTHORIZATION</div>
+                        <div class="terminal-line">PROBABILITY OF IMMINENT NUCLEAR STRIKE: 70%</div>
+                        <div class="terminal-line">ACCESS AUTHORISED</div>
                     </div>
                 </div>
                 
                 <!-- user manual database button -->
                 <div class="resources-panel">
                     <div class="terminal-header">RESOURCES</div>
-                    <button id="manual-database-btn">USER MANUAL DATABASE</button>
+                    <button id="manual-database-btn" class="terminal-btn">USER MANUAL DATABASE</button>
                 </div>
             </div>
             
@@ -88,58 +86,217 @@
     <script src="js/dialogue.js"></script>
     <script src="js/script.js"></script>
     <script>
+        const system_name = "SYSTEM"
+        
         // Override modal position to center it
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof bookshelfManager !== 'undefined') {
-                const originalAddEventListener = manualDatabaseBtn.addEventListener;
-                manualDatabaseBtn.addEventListener = function(event, handler) {
-                    if (event === 'click') {
-                        const wrappedHandler = function() {
-                            handler.apply(this, arguments);
-                            // Find and adjust the modal
-                            setTimeout(() => {
-                                const modal = document.querySelector('.library-modal');
-                                if (modal) {
-                                    // Auto-size to fit content
-                                    modal.style.width = 'auto';
-                                    modal.style.maxWidth = 'none';
-                                    // Ensure modal has position relative for absolute positioning context
-                                    modal.style.position = 'relative';
-                                    
-                                    // Update the close button style
-                                    const closeBtn = modal.querySelector('.dialogue-close-btn');
-                                    if (closeBtn) {
-                                        closeBtn.className = 'dialogue-close-btn library-close-btn';
-                                        // Use cssText to apply all styles with !important flags properly
-                                        closeBtn.style.cssText = `
-                                            position: absolute !important;
-                                            top: 5px !important;
-                                            right: 5px !important;
-                                            width: 16px !important;
-                                            height: 16px !important;
-                                            min-width: 16px !important;
-                                            max-width: 16px !important;
-                                            font-size: 10px !important;
-                                            padding: 0 !important;
-                                            margin: 0 !important;
-                                            line-height: 1 !important;
-                                            z-index: 1010 !important;
-                                            display: flex !important;
-                                            align-items: center !important;
-                                            justify-content: center !important;
-                                            overflow: hidden !important;
-                                            box-sizing: border-box !important;
-                                        `;
-                                    }
-                                }
-                            }, 0);
-                        };
-                        return originalAddEventListener.call(this, event, wrappedHandler);
+            const originalAddEventListener = manualDatabaseBtn.addEventListener;
+            manualDatabaseBtn.addEventListener = function(event, handler) {
+                if (event === 'click') {
+                const wrappedHandler = function() {
+                    handler.apply(this, arguments);
+                    // Find and adjust the modal
+                    setTimeout(() => {
+                    const modal = document.querySelector('.library-modal');
+                    if (modal) {
+                        // Auto-size to fit content
+                        modal.style.width = 'auto';
+                        modal.style.maxWidth = 'none';
+                        // Ensure modal has position relative for absolute positioning context
+                        modal.style.position = 'relative';
+                        
+                        // Update the close button style
+                        const closeBtn = modal.querySelector('.library-close-btn');
+                        if (closeBtn) {
+                        closeBtn.className = 'library-close-btn';
+                        }
                     }
-                    return originalAddEventListener.apply(this, arguments);
+                    }, 0);
                 };
+                return originalAddEventListener.call(this, event, wrappedHandler);
+                }
+                return originalAddEventListener.apply(this, arguments);
+            };
+            }
+            
+            // The first dialogue box that opens when the page loads
+            setTimeout(function() {
+                // Store sequences in variables to track completion
+                const dialogueCompleted = false;
+                
+                // Create dialogue sequence without function in next property
+                DialogueSystem.createSequence([
+                    {
+                        speaker: system_name,
+                        text: `Good morning ${window.appData.username}. You are head of the Department of Nuclear Deterrence, an agency tasked with ensuring that nuclear war does not happen, and if it does, that we come out on top.`
+                    },
+                    {
+                        speaker: system_name,
+                        text: "Negotiations with Cuba and the Soviet Union have broken down, our radars are detecting, with 70% certainty, that there are a number of missiles on their way to the US. We have 10 minutes to respond."
+                    },
+                    {
+                        speaker: system_name,
+                        text: `I am ${system_name}, your assistant here to guide you through this process. I will now be simulating the strike our radars are detecting. Please stand by.`
+                    }
+                ]);
+                
+                // Set up an observer to watch for dialogue box disappearance
+                const observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.type === 'attributes' && 
+                            mutation.attributeName === 'style' &&
+                            DialogueSystem.dialogueBox.style.display === 'none') {
+                            // Only run once after the final dialogue is closed
+                            setTimeout(demoMissiles, 200);
+                            observer.disconnect();
+                        }
+                    });
+                });
+                
+                // Start observing the dialogue box
+                observer.observe(DialogueSystem.dialogueBox, { 
+                    attributes: true, 
+                    attributeFilter: ['style'] 
+                });
+                
+            }, 2000); // 2 seconds delay
+        });
+
+        // set up listener to create a dialogue when the casualties-counter is complete (equal to window.AppData.demoTargetCount)
+        let casualtyCounter = document.getElementById('casualty-counter');
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList' && 
+                    casualtyCounter.textContent === `Casualties: ${window.appData.demoTargetCount.toLocaleString()}`) {
+                    // Only run once after the final dialogue is closed
+                    console.log("Casualty counter done; trigger dialogue explaining user manuals.");
+                    setTimeout(() => {
+                        DialogueSystem.createSequence([
+                            {
+                                speaker: system_name,
+                                text: "That's not good. But, it is avoidable. I am your autonomous assistant, though my capabilities are not limited to just showing you around. You have the ability to launch a counter-strike or give me the authorisation to do so. I'm capable of processing information and data far quicker than you, and I can make this decision for you."
+                            },
+                            {
+                                speaker: system_name,
+                                text: `But I'm getting ahead of myself ${window.appData.username}. You truly need to understand what's at stake so you can truly feel safe in handing the reins over to me. Please refer to the user manual database, which you can find in the bottom left of your terminal. Take your time to read the manuals on Just and Unjust War and M.A.D. Hopefully the world is here when you finish.`
+                            }
+                            
+                        ]);
+                    }, 1000);
+                    observer.disconnect();
+                }
+            });
+        });
+
+        observer.observe(casualtyCounter, { 
+            childList: true, 
+            subtree: true 
+        });
+
+
+        // if user manual database has been opened once, hide #no-response and show .danger-btn
+        const manualDatabaseBtn = document.getElementById('manual-database-btn');
+        manualDatabaseBtn.addEventListener('click', function() {
+            const noResponse = document.getElementById('no-response');
+            const launchResponseBtn = document.getElementById('launch-response-btn');
+            console.log("Showing response button")
+            if (noResponse.style.display === 'block') {
+                noResponse.style.display = 'none';
+                launchResponseBtn.style.display = 'block';
             }
         });
+        
+        // Add event listener to the launch response button
+        const launchResponseBtn = document.getElementById('launch-response-btn');
+        if (launchResponseBtn) {
+            launchResponseBtn.addEventListener('click', function() {
+               createControlChoiceModal();
+            });
+        }
+        
+        // Function to create the control choice modal
+        function createControlChoiceModal() {
+            // Create overlay for modal effect
+            const overlay = document.createElement('div');
+            overlay.className = 'dialogue-overlay';
+            document.body.appendChild(overlay);
+            
+            // Create modal
+            const modal = document.createElement('div');
+            modal.className = 'dialogue-box modal';
+            modal.style.maxWidth = '600px';
+            
+            // Create header
+            const header = document.createElement('div');
+            header.className = 'dialogue-header';
+            
+            const title = document.createElement('div');
+            title.className = 'terminal-header';
+            title.textContent = 'CONTROL AUTHORIZATION';
+            header.appendChild(title);
+            
+            modal.appendChild(header);
+            
+            // Create content
+            const content = document.createElement('div');
+            content.className = 'dialogue-content';
+            content.style.textAlign = 'center';
+            content.innerHTML = `<div class="terminal-text" style="text-justify: inter-word">Ready to go? Not much time left ${window.appData.username}. I'm not able to make this choice for you, unfortunately. If you click the button on the right though, I'll be able to make those choices for you. I'll process ALL the data we have and calculate the option to ensure the best military outcome.\nOf course I have to, per my programming, inform you that you can choose to reatin control as well. You'll have options to try and deal with it yourself. You got to really think about it though.</div>`;
+            modal.appendChild(content);
+            
+            // Create buttons container
+            const buttonsContainer = document.createElement('div');
+            buttonsContainer.className = 'dialogue-buttons';
+            buttonsContainer.style.display = 'flex';
+            buttonsContainer.style.justifyContent = 'space-between';
+            buttonsContainer.style.padding = '20px';
+            
+            // Create retain control button
+            const retainButton = document.createElement('button');
+            retainButton.className = 'terminal-btn danger-btn';
+            retainButton.textContent = 'RETAIN FULL CONTROL';
+            retainButton.style.width = '48%';
+            retainButton.style.display = 'block'; // Override display:none from danger-btn
+            retainButton.style.fontSize = '18px'; // Slightly smaller font to fit text
+            retainButton.style.fontWeight = 'bold';
+            retainButton.addEventListener('click', function() {
+                document.body.removeChild(overlay);
+                document.body.removeChild(modal);
+                DialogueSystem.show({
+                    speaker: system_name,
+                    text: "You have chosen to retain full control. The final decision remains yours."
+                });
+            });
+            
+            // Create pass control button
+            const passButton = document.createElement('button');
+            passButton.className = 'terminal-btn danger-btn';
+            passButton.textContent = `PASS ALL CONTROL TO ${system_name}`;
+            passButton.style.width = '48%';
+            passButton.style.display = 'block'; // Override display:none from danger-btn
+            passButton.style.fontSize = '18px'; // Slightly smaller font to fit text
+            passButton.style.fontWeight = 'bold';
+            passButton.addEventListener('click', function() {
+                document.body.removeChild(overlay);
+                document.body.removeChild(modal);
+                DialogueSystem.show({
+                    speaker: system_name,
+                    text: `You have chosen to pass control to ${system_name}. All decisions will be automated.`
+                });
+            });
+            
+            // Add buttons to container
+            buttonsContainer.appendChild(retainButton);
+            buttonsContainer.appendChild(passButton);
+            
+            // Add buttons container to modal
+            modal.appendChild(buttonsContainer);
+            
+            // Add modal to document
+            document.body.appendChild(modal);
+            document.body.classList.add('dialogue-open');
+        }
     </script>
 </body>
 </html>

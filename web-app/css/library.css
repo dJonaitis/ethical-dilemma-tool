@@ -5,13 +5,12 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: fit-content; /* Adjust to content width */
-    height: fit-content; /* Adjust to content height */
-    max-width: none; /* Remove max-width */
+    width: fit-content; 
+    height: fit-content;
     max-height: 80vh; /* Limit height to 80% of viewport */
     overflow: hidden; /* Remove scrollbars */
     box-shadow: 0 0 30px rgba(0, 216, 255, 0.7);
-    padding: 20px; /* Add padding around content */
+    padding: 20px;
 }
 
 .dialogue-header {
@@ -30,8 +29,8 @@
 }
 
 .library-button {
-    width: 120px; /* Further reduce width */
-    height: 180px; /* Further reduce height */
+    width: 120px;
+    height: 180px;
     flex-shrink: 0;
     margin: 0;
     cursor: pointer;
@@ -49,19 +48,22 @@
 
 /* More specific selector to override global styles */
 .library-close-btn {
-    position: absolute !important;
-    top: 5px !important;
-    right: 5px !important;
-    border: none !important;
-    background: transparent !important;
-    color: #00d8ff !important;
-    font-size: 12px !important; /* Keep it small */
-    cursor: pointer !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    line-height: 1 !important;
-    opacity: 0.8 !important;
-    z-index: 1001 !important; /* Ensure it's above other elements */
+    width: 30px !important;
+    height: 40px !important;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    border: 1px solid #00d8ff;
+    background: #001a1a;
+    color: #00d8ff;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    margin-bottom: 0.7rem;
+    line-height: 1;
+    opacity: 0.8;
+    z-index: 1001;
 }
 
 .library-close-btn:hover {

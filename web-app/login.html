@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PROMETHEUS-9 Login</title>
+    <title>Login</title>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/loading.css">
@@ -24,7 +24,7 @@
     
     <div class="container login-container crt-flicker">
         <div class="login-box">
-            <div class="terminal-header">PROMETHEUS-9 SECURE ACCESS</div>
+            <div class="terminal-header">nuclear device controls</div>
             <div class="login-animation">
                 <pre class="boot-sequence">
 > INITIALIZING SECURE CONNECTION
@@ -42,7 +42,7 @@
                     <label for="password">ACCESS CODE:</label>
                     <input type="password" id="password" name="password" required autocomplete="off">
                 </div>
-                <button type="submit" id="login-button">AUTHENTICATE</button>
+                <button type="submit" id="login-button" class="terminal-btn">AUTHENTICATE</button>
             </form>
             
             <div class="login-footer">
@@ -80,7 +80,7 @@
                 const username = document.getElementById('username').value;
                 
                 // Store username in localStorage to use later
-                localStorage.setItem('prometheus_username', username);
+                localStorage.setItem('username', username);
                 
                 // Show loading overlay
                 loadingOverlay.style.display = 'flex';
