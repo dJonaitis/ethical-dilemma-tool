@@ -580,6 +580,7 @@ label {
     font-family: 'VT323', 'Courier New', monospace;
     color: #00d8ff;
     animation: fadeIn 0.3s ease-in-out;
+    font-size:20px;
 }
 
 .dialogue-box.modal {
