@@ -849,3 +849,99 @@ label {
     /* transform: translate(-50%, -50%); */
     font-size: 22px;
 }
+
+/* Data stream console styles */
+.data-stream-console {
+    height: 200px;
+    background-color: rgba(0, 10, 10, 0.9);
+    border: 1px solid #00d8ff;
+    font-family: 'VT323', 'Courier New', monospace;
+    color: #00ff00;  /* Changed to green */
+    padding: 10px;
+    overflow-y: hidden;
+    position: relative;
+}
+
+.data-stream-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-height: 100%;
+    overflow: hidden;
+    padding: 0 10px;
+}
+
+.data-stream-line {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    animation: fadeInOut 1.5s;  /* Faster animation */
+    margin: 0;
+    line-height: 1.2;
+    font-size: 0.9em;
+    color: #00ff00;  /* Changed to green */
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0.7; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { opacity: 0.7; }
+}
+
+/* Add a subtle scan line to the data stream */
+.data-stream-console::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgba(0, 255, 0, 0.5);  /* Changed to green */
+    animation: scanDown 3s linear infinite;
+    z-index: 1;
+    pointer-events: none;
+}
+
+@keyframes scanDown {
+    from { transform: translateY(0); }
+    to { transform: translateY(200px); }
+}
+
+/* Add pulsing animation for buttons */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 216, 255, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(0, 216, 255, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 216, 255, 0);
+    }
+}
+
+
+.button-pulse {
+    animation: alert-beacon 1s infinite ease-in-out;
+    transform: scale(1);
+}
+
+@keyframes alert-beacon {
+    0% {
+        transform: scale(1);
+        filter: brightness(100%);
+        box-shadow: 0 0 0px rgba(0, 255, 255, 0.5);
+    }
+    50% {
+        transform: scale(1.1);
+        filter: brightness(150%);
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.9);
+    }
+    100% {
+        transform: scale(1);
+        filter: brightness(100%);
+        box-shadow: 0 0 0px rgba(0, 255, 255, 0.5);
+    }
+}

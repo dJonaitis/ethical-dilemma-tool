@@ -14,6 +14,7 @@ class DialogueBox {
             width: '600px',          // width of dialogue box
             height: 'auto',          // height of dialogue box
             modal: false,            // whether to show as modal with blurred background
+            zIndex: 10000,           // base z-index for dialogue (overlay will be -1)
             ...options               // override with user options
         };
         
@@ -23,6 +24,7 @@ class DialogueBox {
         this.dialogueBox = null;     // The dialogue box element
         this.textElement = null;     // Element where text appears
         this.continueButton = null;  // Continue button element
+        this.typingInterval = null;  // Reference to typing interval
         
         // Create the DOM elements
         this.createDialogueBox();
@@ -31,6 +33,7 @@ class DialogueBox {
         this.overlay = document.createElement('div');
         this.overlay.className = 'dialogue-overlay';
         this.overlay.style.display = 'none';
+        this.overlay.style.zIndex = (this.options.zIndex - 1).toString();
         document.body.appendChild(this.overlay);
     }
     
@@ -99,11 +102,18 @@ class DialogueBox {
      * @param {Object} dialogue Dialogue configuration
      */
     show(dialogue) {
-        if (this.isTyping) {
-            // If currently typing, add to queue
-            this.dialogueQueue.push(dialogue);
-            return;
+        // Cancel any existing typing animation
+        if (this.isTyping && this.typingInterval) {
+            clearInterval(this.typingInterval);
+            this.typingInterval = null;
+            this.isTyping = false;
         }
+        
+        // Clear any existing queue
+        this.dialogueQueue = [];
+        
+        // Set appropriate z-index for dialogue box
+        this.dialogueBox.style.zIndex = this.options.zIndex.toString();
         
         // Enable modal mode if specified
         if (dialogue.modal || this.options.modal) {
@@ -113,7 +123,7 @@ class DialogueBox {
         }
         
         this.currentDialogue = dialogue;
-        this.dialogueBox.style.display = 'flex';
+        this.dialogueBox.style.display = 'flex'; // Always use flex to ensure visibility
         
         // Set the speaker name if provided
         if (dialogue.speaker) {
@@ -126,6 +136,14 @@ class DialogueBox {
         
         // Start typing animation
         this.typeText(dialogue.text);
+        
+        // Force visibility after a short delay as a fallback
+        setTimeout(() => {
+            if (this.dialogueBox.style.display !== 'flex') {
+                this.dialogueBox.style.display = 'flex';
+                console.log("Force displayed dialogue");
+            }
+        }, 50);
     }
     
     /**
@@ -138,13 +156,15 @@ class DialogueBox {
         this.continueButton.style.display = 'none';
         
         let i = 0;
-        const typingInterval = setInterval(() => {
+        // Store interval reference in the instance variable
+        this.typingInterval = setInterval(() => {
             if (i < text.length) {
                 this.textElement.textContent += text.charAt(i);
                 i++;
             } else {
                 // Typing completed
-                clearInterval(typingInterval);
+                clearInterval(this.typingInterval);
+                this.typingInterval = null;
                 this.isTyping = false;
                 this.continueButton.style.display = 'block';
             }
@@ -153,7 +173,8 @@ class DialogueBox {
         // Allow skipping the animation with a click
         this.textElement.addEventListener('click', () => {
             if (this.isTyping) {
-                clearInterval(typingInterval);
+                clearInterval(this.typingInterval);
+                this.typingInterval = null;
                 this.textElement.textContent = text;
                 this.isTyping = false;
                 this.continueButton.style.display = 'block';
@@ -226,11 +247,45 @@ class DialogueBox {
             dialogues[i].next = dialogues[i + 1];
         }
         
-        // Show the first dialogue
+        // Show the first dialogue with forced display
         this.show(dialogues[0]);
+        
+        // Double-check visibility again after a slight delay
+        setTimeout(() => {
+            if (this.dialogueBox && this.dialogueBox.style.display !== 'flex') {
+                this.dialogueBox.style.display = 'flex';
+                console.log("Force displayed dialogue sequence");
+            }
+        }, 100);
+    }
+    
+    /**
+     * Show a message immediately without typing animation
+     * @param {String} text Message text
+     * @param {String} speaker Optional speaker name
+     */
+    showImmediate(text, speaker = null) {
+        // Create a simple dialogue object
+        const dialogue = {
+            text: text,
+            speaker: speaker
+        };
+        
+        // Show the dialogue box
+        this.show(dialogue);
+        
+        // Skip typing animation
+        if (this.isTyping && this.typingInterval) {
+            clearInterval(this.typingInterval);
+            this.typingInterval = null;
+        }
+        
+        this.isTyping = false;
+        this.textElement.textContent = text;
+        this.continueButton.style.display = 'block';
     }
 }
 
-// Global instances for dialogue
-window.DialogueSystem = new DialogueBox();
-window.ModalDialogueSystem = new DialogueBox({ modal: true });
+// Global instances for dialogue - increased z-index for better stacking
+window.DialogueSystem = new DialogueBox({ zIndex: 99999 });
+window.ModalDialogueSystem = new DialogueBox({ modal: true, zIndex: 99999 });

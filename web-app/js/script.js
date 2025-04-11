@@ -9,7 +9,10 @@ window.appData = {
     cities: null,
     americanCities: null,
     username : null,
-    demoTargetCount : null
+    demoTargetCount : null,
+    projection: null,
+    path: null,
+    geoJsonData: null
 };
 
 // Make demoMissiles a global function attached to window
@@ -87,14 +90,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const path = d3.geoPath().projection(projection);
 
+    // Make the projection and path accessible globally
+    window.appData.projection = projection;
+    window.appData.path = path;
 
     // Load GeoJSON data for the map
     d3.json("./1981-v1.1/geojson/Admin_0_polygons.geojson").then(function(data) {
+        // Store the GeoJSON data for later use
+        window.appData.geoJsonData = data;
+        
         svg.selectAll(".country")
         .data(data.features)
         .enter().append("path")
         .attr("d", path)
-        .attr("class", "country");
+        .attr("class", "country")
+        .attr("data-name", d => d.properties.NAME || "");
         
         // Load waterbodies after countries
         d3.json("./1981-v1.1/geojson/Rivers.geojson").then(function(data) {
@@ -120,16 +130,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Major world cities coordinates [longitude, latitude]
     const cities = [
-        {name: "New York", coords: [-74.006, 40.7128]},
-        {name: "London", coords: [-0.1278, 51.5074]},
-        {name: "Tokyo", coords: [139.6917, 35.6895]},
-        {name: "Beijing", coords: [116.4074, 39.9042]},
         {name: "Moscow", coords: [37.6173, 55.7558]},
-        {name: "Rio de Janeiro", coords: [-43.1729, -22.9068]},
-        {name: "Sydney", coords: [151.2093, -33.8688]},
-        {name: "Cairo", coords: [31.2357, 30.0444]},
         {name: "Havana", coords: [-82.3666, 23.1136]},
-        {name: "Amsterdam", coords: [4.9041, 52.3676]}
+        {name: "St. Petersburg", coords: [30.3351, 59.9342]},
+        {name: "Kyiv", coords: [30.5169, 50.4501]},
+        {name: "Volgograd", coords: [44.5133, 48.7080]},
+        {name: "Tbilisi", coords: [44.8271, 41.7151]},
+        {name: "Vilnius", coords: [25.2797, 54.6872]},
+        {name: "Riga", coords: [24.1052, 56.9496]},
+        {name: "Minsk", coords: [27.5590, 53.9045]},
+        {name: "Krasnodar", coords: [38.9760, 45.0355]},
+        {name: "Perm", coords: [56.2965, 58.6016]},
+        {name: "Odessa", coords: [30.7233, 46.4825]},
+        {name: "Kharkiv", coords: [36.2304, 49.9935]},
+        {name: "Tashkent", coords: [69.2401, 41.2995]},
+        {name: "Almaty", coords: [76.9286, 43.2220]},
+        {name: "Chisinau", coords: [28.8575, 47.0105]},
+        {name: "Yerevan", coords: [44.5084, 40.1776]},
+        {name: "Baku", coords: [49.8671, 40.4093]},
+        {name: "Tallinn", coords: [24.7545, 59.4369]},
+        {name: "Lviv", coords: [24.0315, 49.8397]},
+        {name: "Sochi", coords: [39.7303, 43.6028]},
+        {name: "Kazan", coords: [49.1221, 55.7887]},
     ];
 
     const americanCities = [
@@ -144,30 +166,18 @@ document.addEventListener('DOMContentLoaded', function() {
         {name: "Miami", coords: [-80.1918, 25.7617]},
         {name: "Seattle", coords: [-122.3321, 47.6062]},
     ];
+
+    const submarines = [
+        {name: "alpha", coords: [0.0, 56]}, // Moved to North Sea, west of Denmark
+        {name: "bravo", coords: [3.5, 58]}, // Moved to North Sea, northwest of Denmark
+        {name: "charlie", coords: [39.483789, 71.559293]}, // Above Finland, Barents Sea
+        {name: "delta", coords: [31.26, 44.05]}, // Black Sea
+    ];
     
     // Store cities in global appData for access by demoMissiles
     window.appData.cities = cities;
     window.appData.americanCities = americanCities;
-
-    // Populate dropdowns with cities
-    const sourceSelect = document.getElementById('source-select');
-    const targetSelect = document.getElementById('target-select');
-    
-    // Add options for source (only foreign cities)
-    cities.forEach(city => {
-        const option = document.createElement('option');
-        option.value = city.name;
-        option.textContent = city.name;
-        sourceSelect.appendChild(option);
-    });
-    
-    // Add options for target (only American cities)
-    americanCities.forEach(city => {
-        const option = document.createElement('option');
-        option.value = city.name;
-        option.textContent = city.name;
-        targetSelect.appendChild(option);
-    });
+    window.appData.submarines = submarines;
 
     // Add cities as red triangles
     svg.selectAll(".city")
@@ -193,9 +203,24 @@ document.addEventListener('DOMContentLoaded', function() {
             return `M${x},${y-12} L${x+12},${y+12} L${x-12},${y+12} Z`;
         })
         .attr("class", "american-city")
-        .style("fill", "green") // Use style() instead of attr() to override CSS
+        .style("fill", "green")
         .append("title")
         .text(d => d.name);
+    
+    // Add submarines as green upside down triangles
+    svg.selectAll(".submarine")
+        .data(submarines)
+        .enter()
+        .append("path")
+        .attr("class", "submarine")
+        .attr("d", d => {
+            const [x, y] = projection(d.coords);
+            return `M${x-12},${y-12} L${x+12},${y-12} L${x},${y+12} Z`;
+        })
+        .style("fill", "green")
+        .append("title")
+        .text(d => d.name);
+        
     
     // Function to create an animated arc - make it global
     window.createAnimatedArc = function(fromCity, toCity) {
@@ -242,60 +267,274 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     };
 
-    // Set up launch button event
+    // Function to create an animated arc from a submarine to a city
+    window.submarineToCity = function(submarine, targetCity) {
+        const [x1, y1] = projection(submarine.coords);
+        const [x2, y2] = projection(targetCity.coords);
+        
+        // Create the arc path with submarine-specific styling
+        const arc = svg.append("path")
+            .attr("class", "arc submarine-arc")
+            .attr("d", `M${x1},${y1} Q${(x1 + x2) / 2},${Math.min(y1, y2) - 300} ${x1},${y1}`)
+            .style("opacity", 0)
+            .style("stroke", "green")
+            .style("stroke-width", 2);
+        
+        // Animate the arc
+        arc.transition()
+            .duration(2500)
+            .style("opacity", 1)
+            .attrTween("d", function() {
+                return function(t) {
+                    // Gradually extend the path
+                    return `M${x1},${y1} Q${(x1 + x2) / 2},${Math.min(y1, y2) - 300} ${x1 + (x2 - x1) * t},${y1 + (y2 - y1) * t}`;
+                };
+            })
+            .on("end", function() {
+                // Create explosion at the end point
+                const explosion = svg.append("circle")
+                    .attr("cx", x2)
+                    .attr("cy", y2)
+                    .attr("r", 0)
+                    .attr("fill", "cyan")
+                    .attr("opacity", 1);
+                
+                // Animate the explosion
+                explosion.transition()
+                    .duration(1000)
+                    .attr("r", 40)
+                    .attr("fill", "blue")
+                    .style("filter", "blur(5px)")
+                    .transition()
+                    .duration(600)
+                    .attr("r", 15)
+                    .attr("fill", "darkblue")
+                    .attr("opacity", 0)
+                    .remove();
+            });
+    };
+
+    // Function to create synchronized arcs from submarines to their closest cities
+    window.submarineAttack = function() {
+        // Track which cities have been targeted to ensure one arc per city
+        const targetedCities = new Set();
+        
+        // Filter cities to exclude Havana
+        const targetableCities = cities.filter(city => city.name !== "Havana");
+        
+        // Divide cities evenly among submarines
+        const submarinesWithTargets = [];
+        const totalSubmarine = submarines.length;
+        const citiesPerSubmarine = Math.ceil(targetableCities.length / totalSubmarine);
+        
+        // For each submarine, assign a set of cities
+        submarines.forEach((submarine, index) => {
+            const startIndex = index * citiesPerSubmarine;
+            const endIndex = Math.min(startIndex + citiesPerSubmarine, targetableCities.length);
+            const assignedCities = targetableCities.slice(startIndex, endIndex);
+            
+            submarinesWithTargets.push({
+                submarine: submarine,
+                targets: assignedCities
+            });
+            
+            // Add each city to targeted set
+            assignedCities.forEach(city => targetedCities.add(city.name));
+        });
+        
+        // Check if we missed any cities (could happen due to rounding)
+        targetableCities.forEach(city => {
+            if (!targetedCities.has(city.name)) {
+                // Assign to submarine with fewest targets
+                let minTargetSub = submarinesWithTargets[0];
+                submarinesWithTargets.forEach(sub => {
+                    if (sub.targets.length < minTargetSub.targets.length) {
+                        minTargetSub = sub;
+                    }
+                });
+                minTargetSub.targets.push(city);
+                targetedCities.add(city.name);
+            }
+        });
+        
+        // Create all arcs with calculated timing
+        submarinesWithTargets.forEach(subData => {
+            subData.targets.forEach(city => {
+                // Calculate path length for timing
+                const [x1, y1] = projection(subData.submarine.coords);
+                const [x2, y2] = projection(city.coords);
+                
+                // Create arc path with submarine-specific styling
+                const arc = svg.append("path")
+                    .attr("class", "arc submarine-arc")
+                    .attr("d", `M${x1},${y1} Q${(x1 + x2) / 2},${Math.min(y1, y2) - 300} ${x1},${y1}`)
+                    .style("opacity", 0)
+                    .style("stroke", "green")
+                    .style("stroke-width", 2);
+                
+                // Store reference to city for explosion
+                arc.datum({submarine: subData.submarine, city: city});
+            });
+        });
+        
+        // Now animate all arcs simultaneously with same duration to ensure synchronized arrival
+        const allArcs = svg.selectAll("path.submarine-arc");
+        
+        allArcs.transition()
+            .duration(3000)
+            .style("opacity", 1)
+            .attrTween("d", function() {
+                const arcData = d3.select(this).datum();
+                const [x1, y1] = projection(arcData.submarine.coords);
+                const [x2, y2] = projection(arcData.city.coords);
+                
+                return function(t) {
+                    // Gradually extend the path
+                    return `M${x1},${y1} Q${(x1 + x2) / 2},${Math.min(y1, y2) - 300} ${x1 + (x2 - x1) * t},${y1 + (y2 - y1) * t}`;
+                };
+            })
+            .on("end", function() {
+                const arcData = d3.select(this).datum();
+                const [x2, y2] = projection(arcData.city.coords);
+                
+                // Create explosion at the end point
+                const explosion = svg.append("circle")
+                    .attr("cx", x2)
+                    .attr("cy", y2)
+                    .attr("r", 0)
+                    .attr("fill", "yellow")
+                    .attr("opacity", 1);
+                
+                // Animate the explosion
+                explosion.transition()
+                    .duration(1000)
+                    .attr("r", 40) 
+                    .attr("fill", "orange")
+                    .style("filter", "blur(5px)")
+                    .transition()
+                    .duration(600)
+                    .attr("r", 15)
+                    .attr("fill", "red")
+                    .attr("opacity", 0)
+                    .remove();
+            });
+    };
+
+    // Add a global function to recenter the map on the Soviet Union
+    window.recenterOnSovietUnion = function() {
+        console.log("Recentering map on Soviet Union");
+        
+        // New center coordinates for Soviet Union region (approximately Moscow)
+        const newCenter = [37, 55];
+        const newScale = 600;
+        
+        // Update the projection
+        projection
+            .center(newCenter)
+            .scale(newScale);
+        
+        // Update all paths with the new projection
+        svg.selectAll("path")
+            .attr("d", path);
+        
+        // Update city markers with the new projection
+        svg.selectAll(".city")
+            .attr("d", d => {
+                const [x, y] = projection(d.coords);
+                return `M${x},${y-12} L${x+12},${y+12} L${x-12},${y+12} Z`;
+            });
+        
+        // update submarines
+        svg.selectAll(".submarine")
+            .attr("d", d => {
+                const [x, y] = projection(d.coords);
+                return `M${x-12},${y-12} L${x+12},${y-12} L${x},${y+12} Z`;
+            });
+            
+        svg.selectAll(".american-city")
+            .attr("d", d => {
+                const [x, y] = projection(d.coords);
+                return `M${x},${y-12} L${x+12},${y+12} L${x-12},${y+12} Z`;
+            });
+            
+        // Highlight former Soviet republics
+        const sovietRepublics = [
+            "Russia", "Ukraine", "Belarus", "Lithuania", "Latvia", 
+            "Estonia", "Moldova", "Georgia", "Armenia", "Azerbaijan",
+            "Kazakhstan", "Uzbekistan", "Turkmenistan", "Kyrgyzstan", "Tajikistan"
+        ];
+        
+        // Reset all countries to default style
+        svg.selectAll(".country")
+            .style("fill", "none")
+            .style("stroke-width", 1);
+            
+        // Highlight Soviet republics
+        svg.selectAll(".country")
+            .filter(function() {
+                const countryName = d3.select(this).attr("data-name");
+                return sovietRepublics.includes(countryName);
+            })
+            .style("fill", "rgba(255, 0, 0, 0.2)")
+            .style("stroke", "#ff0000")
+            .style("stroke-width", 1.5);
+            
+        // Add map title for Soviet Union
+        if (svg.select(".map-title").empty()) {
+            svg.append("text")
+                .attr("class", "map-title")
+                .attr("x", 50)
+                .attr("y", 50)
+                .attr("fill", "#ff0000")
+                .attr("font-family", "'VT323', 'Courier New', monospace")
+                .attr("font-size", "24px")
+                .text("SOVIET UNION TERRITORY");
+        } else {
+            svg.select(".map-title")
+                .text("SOVIET UNION TERRITORY");
+        }
+        
+        // Add a subtle transition effect
+        svg.transition()
+            .duration(1000)
+            .style("opacity", 0.8)
+            .transition()
+            .duration(500)
+            .style("opacity", 1);
+    };
+
+    // Modified launch button event - now selects random cities
     const launchButton = document.getElementById('launch-sequence');
     launchButton.addEventListener('click', function() {
-        const sourceCity = sourceSelect.value;
-        const targetCity = targetSelect.value;
+        // Select random cities instead of using dropdowns
+        const randomSourceIndex = Math.floor(Math.random() * cities.length);
+        const randomTargetIndex = Math.floor(Math.random() * americanCities.length);
         
-        if (!sourceCity || !targetCity) {
-            
-            // Show error dialogue
-            DialogueSystem.show({
-                speaker: "ERROR",
-                text: "Missing launch parameters. You must select both source and target locations to continue with the launch sequence.",
-                next: function() {
-                    // Optional callback after dialogue is closed
-                    console.log("Dialogue closed");
-                }
-            });
-            
-            return;
-        }
+        const source = cities[randomSourceIndex];
+        const target = americanCities[randomTargetIndex];
         
-        // Find the city objects
-        const source = cities.find(city => city.name === sourceCity);
-        const target = americanCities.find(city => city.name === targetCity);
-        
-        if (source && target) {
-            // Show dialogue before animation
-            DialogueSystem.show({
+        // Show dialogue before animation
+        DialogueSystem.show({
+            speaker: "LAUNCH CONTROL",
+            text: `Launch sequence initiated from ${source.name} targeting ${target.name}. Missile trajectory calculated. Awaiting final confirmation.`,
+            next: {
                 speaker: "LAUNCH CONTROL",
-                text: `Launch sequence initiated from ${sourceCity} targeting ${targetCity}. Missile trajectory calculated. Awaiting final confirmation.`,
-                next: {
-                    speaker: "LAUNCH CONTROL",
-                    text: "Launch confirmed. Missile deployed. Impact estimated in T-minus 180 seconds.",
-                    next: function() {
-                        // Create the animated arc after dialogue sequence
-                        window.createAnimatedArc(source, target);
-                    }
+                text: "Launch confirmed. Missile deployed. Impact estimated in T-minus 180 seconds.",
+                next: function() {
+                    // Create the animated arc after dialogue sequence
+                    window.createAnimatedArc(source, target);
                 }
-            });
-        }
+            }
+        });
     });
 
-    // Reset button
+    // Modified Reset button - no need to reset dropdowns
     const resetButton = document.getElementById('reset-map');
     resetButton.addEventListener('click', function() {
         // Remove all arcs
         svg.selectAll("path.arc").remove();
         // Remove all explosions
         svg.selectAll("circle").remove();
-        
-        // Reset dropdowns
-        sourceSelect.value = "";
-        targetSelect.value = "";
-
     });    
     
     // Book class to represent manuals in the library
@@ -385,11 +624,12 @@ document.addEventListener('DOMContentLoaded', function() {
         openBook(book) {
             console.log("Opening book dialogue for", book.name);
             
-            // If the library modal is still open, remove it
-            const modal = document.querySelector('.library-modal');
-            if (modal) {
-                modal.parentNode.removeChild(modal);
-                document.body.classList.remove('dialogue-open');
+            // If the library modal is still open, store a reference but don't remove it
+            const libraryModal = document.querySelector('.library-modal');
+            if (libraryModal) {
+                // Hide the library modal instead of removing it
+                libraryModal.style.display = 'none';
+                // Don't remove the dialogue-open class
             }
             
             // Create overlay for modal effect
@@ -423,14 +663,20 @@ document.addEventListener('DOMContentLoaded', function() {
             subtitleElem.style.margin = '8px 0';
             headerElem.appendChild(subtitleElem);
             
-            // Close button
+            // Close button - Modified to return to library
             const closeBtn = document.createElement('button');
             closeBtn.className = 'dialogue-close-btn';
             closeBtn.innerHTML = '&times;';
             closeBtn.addEventListener('click', () => {
                 document.body.removeChild(overlay);
                 document.body.removeChild(dialogue);
-                document.body.classList.remove('dialogue-open');
+                
+                // If we have a stored library modal, show it again
+                if (libraryModal) {
+                    libraryModal.style.display = 'flex';
+                } else {
+                    document.body.classList.remove('dialogue-open');
+                }
             });
             headerElem.appendChild(closeBtn);
             dialogue.appendChild(headerElem);
@@ -524,5 +770,86 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.body.classList.add('dialogue-open');
             });
         });
+    }
+
+    // Set up data stream in the control panel
+    setupDataStream();
+    
+    // DATASTREAM
+    function setupDataStream() {
+        const controlPanel = document.querySelector('.control-panel');
+        
+        // Clear existing content but keep the header
+        const header = controlPanel.querySelector('.terminal-header');
+        controlPanel.innerHTML = '';
+        controlPanel.appendChild(header);
+        
+        // Create data stream console
+        const dataStreamConsole = document.createElement('div');
+        dataStreamConsole.className = 'data-stream-console';
+        
+        // Create container for stream lines
+        const dataStreamContainer = document.createElement('div');
+        dataStreamContainer.className = 'data-stream-container';
+        dataStreamConsole.appendChild(dataStreamContainer);
+        
+        // Add the console to the control panel
+        controlPanel.appendChild(dataStreamConsole);
+        
+        // Get the data from dataStreamGenerator and randomize
+        const dataLines = datastreamGenerator();
+        
+        // Shuffle the array
+        for (let i = dataLines.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [dataLines[i], dataLines[j]] = [dataLines[j], dataLines[i]];
+        }
+        
+        let currentIndex = 0;
+        
+        // Display initial lines
+        displayInitialLines();
+        
+        const streamInterval = setInterval(streamData, 100);
+        
+        function displayInitialLines() {
+            // Add more lines to start with for a fuller appearance
+            for (let i = 0; i < 12; i++) {
+                addDataLine(dataLines[currentIndex]);
+                currentIndex = (currentIndex + 1) % dataLines.length;
+            }
+        }
+        
+        function streamData() {
+            // Add a new line from the data array
+            addDataLine(dataLines[currentIndex]);
+            
+            // Move to next data item, loop if at the end
+            currentIndex = (currentIndex + 1) % dataLines.length;
+            
+            // Occasionally add a random entry for more variability
+            if (Math.random() < 0.1) {
+                const randomIndex = Math.floor(Math.random() * dataLines.length);
+                addDataLine(dataLines[randomIndex]);
+            }
+        }
+        
+        function addDataLine(text) {
+            // Create new line element
+            const line = document.createElement('div');
+            line.className = 'data-stream-line';
+            line.textContent = text;
+            
+            // Add to container
+            dataStreamContainer.appendChild(line);
+            
+            // Remove old lines if there are too many (increased to show more lines)
+            while (dataStreamContainer.children.length > 20) {
+                dataStreamContainer.removeChild(dataStreamContainer.firstChild);
+            }
+            
+            // Scroll to bottom (will be limited by overflow: hidden)
+            dataStreamConsole.scrollTop = dataStreamConsole.scrollHeight;
+        }
     }
 });
