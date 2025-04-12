@@ -7,6 +7,56 @@
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/loading.css">
+    <style>
+        /* Added styles for multi-panel layout */
+        .multi-panel-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 20px;
+        }
+        
+        .info-box {
+            flex: 1;
+            background-color: rgba(0, 26, 26, 0.85);
+            border: 1px solid #00d8ff;
+            box-shadow: 0 0 10px rgba(0, 216, 255, 0.5);
+            padding: 20px;
+            color: #00d8ff;
+            font-family: 'VT323', 'Courier New', monospace;
+            height: fit-content;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .login-box {
+            flex: 1.2;
+        }
+        
+        .info-header {
+            border-bottom: 1px solid #00d8ff;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            text-align: center;
+        }
+        
+        .info-content {
+            line-height: 1.5;
+        }
+        
+        @media (max-width: 900px) {
+            .multi-panel-container {
+                flex-direction: column;
+            }
+            
+            .info-box {
+                margin-bottom: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Add scanline overlay for retro effect -->
@@ -23,31 +73,62 @@
     </div>
     
     <div class="container login-container crt-flicker">
-        <div class="login-box">
-            <div class="terminal-header">nuclear device controls</div>
-            <div class="login-animation">
-                <pre class="boot-sequence">
+        <div class="multi-panel-container">
+            <!-- Left context box -->
+            <div class="info-box">
+                <div class="info-header">CONTEXT</div>
+                <div class="info-content">
+                    <p>October 24, 1962 - The Cuban Missile Crisis has reached its peak.</p>
+                    <p>All negotiation with Cuba and the USSR seems to have broken down, and the world is on the precipice of nuclear war.</p>
+                    <p>The Department of Nuclear Deterrence is a fictional branch of the United States government responsible for monitoring all nuclear threats and organizing an appropriate response if necessary.</p>
+                    <p>You will be put in the shoes of the head of this department, in charge of making a critical decision that puts the world on the brink of crisis.</p>
+                    <p>Login to assess the situation and determine the appropriate course of action. (Enter any name to login, and anything for your password).</p>
+                </div>
+            </div>
+            
+            <!-- Center login box -->
+            <div class="login-box">
+                <div class="terminal-header">Department of Nuclear Deterrence Terminal</div>
+                <div class="login-animation">
+                    <pre class="boot-sequence">
 > INITIALIZING SECURE CONNECTION
 > ESTABLISHING ENCRYPTED CHANNEL
 > AUTHENTICATION REQUIRED
 > AWAITING CREDENTIALS...
-                </pre>
+                    </pre>
+                </div>
+                <form id="login-form" action="index.html">
+                    <div class="form-group">
+                        <label for="username">LOGIN ID:</label>
+                        <input type="text" id="username" name="username" required autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">ACCESS CODE:</label>
+                        <input type="password" id="password" name="password" required autocomplete="off">
+                    </div>
+                    <button type="submit" id="login-button" class="terminal-btn">AUTHENTICATE</button>
+                </form>
+                
+                <div class="login-footer">
+                    DEPARTMENT OF NUCLEAR DETERRENCE
+                    <div class="security-notice">WARNING: UNAUTHORIZED ACCESS PROHIBITED</div>
+                </div>
             </div>
-            <form id="login-form" action="index.html">
-                <div class="form-group">
-                    <label for="username">LOGIN ID:</label>
-                    <input type="text" id="username" name="username" required autocomplete="off">
-                </div>
-                <div class="form-group">
-                    <label for="password">ACCESS CODE:</label>
-                    <input type="password" id="password" name="password" required autocomplete="off">
-                </div>
-                <button type="submit" id="login-button" class="terminal-btn">AUTHENTICATE</button>
-            </form>
             
-            <div class="login-footer">
-                DEPARTMENT OF NUCLEAR DETERRENCE
-                <div class="security-notice">WARNING: UNAUTHORIZED ACCESS PROHIBITED</div>
+            <!-- Right purpose box -->
+            <div class="info-box">
+                <div class="info-header">WHAT'S THE POINT?</div>
+                <div class="info-content">
+                    <p>This is a simulation designed to present you with an ethical dilemma. The date might be 1962, but the technology is one more readily becoming a part of our life.</p>
+                    <p>You will face questions about:</p>
+                    <ul>
+                        <li>What is the role of Autonomous Weapons Systems in today's warfare?</li>
+                        <li>Is there a place for AI-powered weapons in "just war"?</li>
+                        <li>To be truly effective in war, we need to process amounts of data humans could never at the speed we need. Should we let AI do it?</li>
+                        <li>The value of human life, and whether we should let that value be determined by AI systems</li>
+                    </ul>
+                    <p>These choices are explored through Immanuel's Kant deontological ethics, applied to a modern context with a coat of 1960s paint.</p>
+                </div>
             </div>
         </div>
         <div class="grid-effect"></div>
