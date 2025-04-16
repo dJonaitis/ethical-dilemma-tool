@@ -64,7 +64,7 @@
         </div>
         
         <footer>
-            DEPARTMENT OF NUCLEAR DETERRENCE
+            DEPARTMENT OF NUCLEAR DETERRENCE by Danielius Jonaitis
         </footer>
     </div>
     
@@ -541,6 +541,14 @@
                 `;
             }
             actualContent.appendChild(actualStats);
+
+            const ethicalBtn = document.createElement('button');
+            ethicalBtn.className = 'terminal-btn';
+            ethicalBtn.textContent = 'Explore the ethical argument underlying this experience';
+            ethicalBtn.addEventListener('click', function() {
+                window.location.href = 'ethical_argument.md';
+            });
+            actualContent.appendChild(ethicalBtn);
             
             // Create content for simulated outcome A
             const simulatedContentA = document.createElement('div');
